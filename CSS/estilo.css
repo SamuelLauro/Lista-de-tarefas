@@ -40,7 +40,9 @@ button.add{
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
-
+button.add:hover{
+    background: rgba(0, 128, 0, 0.726);
+}
 main{
     display: flex;
     flex-flow: row wrap;
@@ -58,6 +60,7 @@ main{
     height: 80px;
     width: 100%;
     margin-top: 2%;
+    cursor: pointer;
     
 }
 
@@ -94,6 +97,10 @@ main{
     border: none;
     height: 80px;
     width: 100%;
+    cursor: pointer;
+}
+.delete:hover{
+    background: rgb(179, 0, 0);
 }
 span.material-symbols-outlined{
     font-size: 20px;
