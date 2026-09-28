@@ -73,6 +73,10 @@ main{
     color: gray;
 }
 
+.item.clicado .item-icone span{
+    color: green;
+}
+
 
 
 .item-icone{

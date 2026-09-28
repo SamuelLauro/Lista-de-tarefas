@@ -1,71 +1,68 @@
-let contador = 0
 let input = document.getElementById('tarefa');
 let btnAdd = document.getElementById('btn-add');
 let main = document.getElementById('areaLista');
 
+function criarElemento(tag, classe, texto){
+    let elemento = document.createElement(tag);
+    if (classe) elemento.className = classe;
+    //textContent trata o valor como texto: HTML digitado pelo usuário não é interpretado (evita XSS)
+    if (texto) elemento.textContent = texto;
+    return elemento;
+}
+
 function addTarefa(){
-    //Pegar o valor digitado no input
-    let valorInput = input.value;
+    //Pegar o valor digitado no input, sem espaços nas pontas
+    let valorInput = input.value.trim();
 
-    //Se não for vazio, nem nulo, nem indefinido
-    if((valorInput !== "") && (valorInput !== null) && (valorInput !== undefined)){
+    //Se estiver vazio, não adiciona nada
+    if (valorInput === ''){
+        return;
+    }
 
-        ++contador;
+    let item = criarElemento('div', 'item');
 
-        let novoItem = ` <div id="${contador}" class="item">
-        <div onclick="marcarTarefa"${contador})" class="item-icone">
-            <span id="icone_${contador}" class="mdi-circle-outline">
-                
-                </span>
-        </div>
-        
-        <div onclick="marcarTarefa(${contador})" class="item-nome">
-            ${valorInput}
-        </div>
+    let icone = criarElemento('span', 'material-symbols-outlined', 'radio_button_unchecked');
+    let areaIcone = criarElemento('div', 'item-icone');
+    areaIcone.appendChild(icone);
 
-        <div class="item-botao">
-            <button onclick="deletar(${contador})" class="delete"> 
-                <span class="material-symbols-outlined">
-                    delete
-                    </span>Deletar</button>
-        </div>`;
+    let nome = criarElemento('div', 'item-nome', valorInput);
 
-        //Adicionar outro item no main
-        main.innerHTML += novoItem;
+    let botaoDeletar = criarElemento('button', 'delete');
+    botaoDeletar.appendChild(criarElemento('span', 'material-symbols-outlined', 'delete'));
+    botaoDeletar.appendChild(document.createTextNode('Deletar'));
+    let areaBotao = criarElemento('div', 'item-botao');
+    areaBotao.appendChild(botaoDeletar);
 
-        //Zerar campo input
-        input.value = "";
-        input.focus();
+    areaIcone.addEventListener('click', () => marcarTarefa(item, icone));
+    nome.addEventListener('click', () => marcarTarefa(item, icone));
+    botaoDeletar.addEventListener('click', () => item.remove());
 
+    item.append(areaIcone, nome, areaBotao);
+
+    //Adicionar o item na lista
+    main.appendChild(item);
+
+    //Zerar campo input
+    input.value = '';
+    input.focus();
+}
+
+function marcarTarefa(item, icone){
+    let concluida = item.classList.toggle('clicado');
+    icone.textContent = concluida ? 'check_circle' : 'radio_button_unchecked';
+
+    //Tarefa concluída vai para o fim da lista
+    if (concluida){
+        main.appendChild(item);
     }
 }
 
-function deletar(id){
-    var tarefa = document.getElementById(id);
-    tarefa.remove();
-}
+btnAdd.addEventListener('click', addTarefa);
 
-function marcarTarefa(id){
-    var item = document.getElementById(id);
-    var classe = item.getAttribute('class');
-    console.log(classe);
-
-    if (classe =="item"){
-        item.classList.add('clicado');
-
-        var icone = document.getElementById('icone_'+id);
-
-        item.parentNode.appendChild(item);
-        
-    } else{
-        item.classList.remove('clicado');
-    }
-}
-
-input.addEventListener("keyup", function(event){
-    //Se teclou enter (13)
-    if(event.keyCode === 13){
+input.addEventListener('keyup', function(event){
+    //Se teclou Enter
+    if (event.key === 'Enter'){
         event.preventDefault();
-        btnAdd.click();
+        addTarefa();
     }
-})
+});
